@@ -35,12 +35,29 @@ bacteria = bact_files.keys()
 unknown = pd.DataFrame([dict(species="Unknown", length=4391174, 
                              GC=0.656209, color=(1, 0.2, 0.2)), ])
 
+def add_genome(filename, species):
+    ''' when passed a filename and species, checks to see if the file is
+    a sequence file and if so, adds it to the list of bacterial files'''
+    if os.path.exists(filename):
+        try:
+            ch = SeqIO.parse(filename, 'fasta')
+            
+            if species in bact_files:
+                bact_files[species] = tuple(set(list(bact_files[species])+[filename]))
+            else:
+                bact_files[species] = tuple([filename])
+            print('file {} added to species {}'.format(filename, species))
+        except Exception as e:
+            print('Cannot read {} {}'.format(filename,e ))
+    else:
+        print('cannot find file {}'.format(filename))
 
 def calc_size_gc(*names):
     """ When passed names corresponding to the bacteria
     listed in bact_files, returns a Pandas dataframe
     representing sequence length and GC content for
     each chromosome.
+    DM: adapt to calculate over a genome expressed as contigs
     """
     # Use a Pandas DataFrame to hold data. Dataframes are 
     # useful objects/concepts, and support a number of 
@@ -53,12 +70,25 @@ def calc_size_gc(*names):
     for name in names:
         try:
             for filename in bact_files[name]:
-                ch = SeqIO.read(os.path.join(bact_datadir, filename), 'fasta')
-                ch_size = len(ch.seq)
-                ch_gc = float(ch.seq.count('C') + ch.seq.count('G')) / ch_size
+                    
+                seqfile = os.path.join(bact_datadir, filename)
+                if os.path.exists(filename):
+                    seqfile=filename
+                ch = SeqIO.parse(seqfile, 'fasta')
+                description = name
+                ch_size = 0
+                ch_g = 0
+                ch_c = 0
+                for s in ch:
+                    ch_size += len(s.seq)
+                    ch_g += s.seq.count('G')
+                    ch_c += s.seq.count('C')
+                    if s.description:
+                        description = s.description
+                ch_gc = float(ch_c + ch_g) / ch_size
                 df = df.append(pd.DataFrame([dict(species=name, length=ch_size, 
                                                   GC=ch_gc, filename=filename,
-                                                  descrtiption=ch.description,
+                                                  description=description,
                                                   color=colors[name]), ]), 
                                ignore_index=True)
         except KeyError:

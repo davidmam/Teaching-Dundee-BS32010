@@ -6,6 +6,7 @@
 import pandas as pd                
 from collections import defaultdict
 import os
+from Bio import SeqIO
 
 bact_datadir = "genome_data/gc_content"
 files = {"Mycoplasma genitalium": ("NC_018495.fna",
@@ -30,6 +31,46 @@ bacteria = files.keys()
 bact_files = {}
 for k, v in files.items():
     bact_files[k] = tuple([os.path.join(bact_datadir, fn) for fn in v])
+
+def add_genome(filename, species):
+    ''' when passed a filename and species, checks to see if the file is
+    a sequence file and if so, adds it to the list of bacterial files'''
+    if os.path.exists(filename):
+        try:
+            ch = SeqIO.parse(filename, 'fasta')
+            
+            if species in bact_files:
+                bact_files[species] = tuple(set(list(bact_files[species])+[filename]))
+            else:
+                bact_files[species] = tuple([filename])
+            print('file {} added to species {}'.format(filename, species))
+        except Exception as e:
+            print('Cannot read {} {}'.format(filename,e ))
+    else:
+        print('cannot find file {}'.format(filename))
+
+def count_genome_kmers(filename, k):
+    '''This method counts kmers across all sequences in a fasta file.
+    It will check if the file exists and if not search in bact_datadir.
+    
+    It calls count_str_kmers(seq, k) for each sequence and merges the results.
+    These are returned as a Pandas dataframe'''
+    seqfile = os.path.join(bact_datadir, filename)
+    if os.path.exists(filename):
+        seqfile = filename
+        print('found file {}'.format(filename))
+    try:
+        sr = SeqIO.parse(seqfile, 'fasta')
+        kdict = defaultdict(int)
+        for inseq in sr:
+            kdict = count_str_kmers(str(inseq.reverse_complement().seq), k, kdict)
+            kdict = count_str_kmers(str(inseq.seq), k, kdict)
+        df = pd.DataFrame.from_dict(kdict, orient="index")
+        df.columns = ("frequency",)
+        return df
+    except Exception as e:
+        print('Error calculating kmers for {}: {}'.format(filename, e))
+    
 
 def count_str_kmers(instr, k, kdict=None):
     """Counts sequences of size k in instr, populating kdict.
