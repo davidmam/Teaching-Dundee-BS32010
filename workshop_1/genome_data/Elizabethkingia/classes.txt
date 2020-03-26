@@ -30,7 +30,7 @@ GCF_000495935.1	Elizabethkingia anophelis
 GCF_000447375.1	Elizabethkingia meningoseptica
 SRR3240397_final	outbreak
 SRR3240398_final	outbreak
-SRR3240399_finaloutbreak
+SRR3240399_final	outbreak
 SRR3240400_final	outbreak
 SRR3240401_final	outbreak
 SRR3240402_final	outbreak
