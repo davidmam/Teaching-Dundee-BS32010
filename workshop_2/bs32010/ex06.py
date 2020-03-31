@@ -98,7 +98,7 @@ def find_rbbh(s1, s2, pid=0, cov=0):
 
 # Function to plot 2D histogram, with colorbar scale, from
 # two dataframe columns.
-def plot_hist2d(col1, col2, xlab="", ylab="", header="", bins=100):
+def plot_hist2d(col1, col2, xlab="", ylab="", header="", bins=100, file="hist2d.png", **fparams):
     """Plots a 2D histogram of the two passed dataframe columns."""
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -118,9 +118,9 @@ def plot_hist2d(col1, col2, xlab="", ylab="", header="", bins=100):
     ax.set_xlabel(xlab)
     ax.set_ylabel(ylab)
     ax.set_title(header)
-    
+    fig.savefig(file, **fparams)
 # Function for scatterplot from two dataframe columns.
-def plot_scatter(col1, col2, xlab="", ylab="", header="", file="figure.png",**fparams):
+def plot_scatter(col1, col2, xlab="", ylab="", header="", file="scatter.png",**fparams):
     """Plots a scatterplot of the two passed dataframe columns,
     colouring points by y-axis value.
     """
