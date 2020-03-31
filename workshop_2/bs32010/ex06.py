@@ -120,7 +120,7 @@ def plot_hist2d(col1, col2, xlab="", ylab="", header="", bins=100):
     ax.set_title(header)
     
 # Function for scatterplot from two dataframe columns.
-def plot_scatter(col1, col2, xlab="", ylab="", header=""):
+def plot_scatter(col1, col2, xlab="", ylab="", header="", file="figure.png",**fparams):
     """Plots a scatterplot of the two passed dataframe columns,
     colouring points by y-axis value.
     """
@@ -131,6 +131,7 @@ def plot_scatter(col1, col2, xlab="", ylab="", header=""):
     ax.set_xlabel(xlab)
     ax.set_ylabel(ylab)
     ax.set_title(header)
+    fig.savefig(file, **fparams)
 
 # Function to process GenBank files into a dictionary of CDS features,
 # keyed by protein ID, where the values are a tuple of (source, start, end, 
