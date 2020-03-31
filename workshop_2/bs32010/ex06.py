@@ -23,7 +23,7 @@ def read_data(s1, s2):
     to passed accessions, returning a Pandas dataframe.
     """
     # We specify no index for these dataframes
-    df = pd.DataFrame.from_csv(os.path.join(datadir, "%s_vs_%s.tab" % (s1, s2)),
+    df = pd.read_csv(os.path.join(datadir, "%s_vs_%s.tab" % (s1, s2)),
                                sep="\t", index_col=None)
     df.columns=['query_id', 'subject_id', 'query_length', 'subject_length', 
                 'alignment_length', 'identical_sites', 'percentage_identity',
