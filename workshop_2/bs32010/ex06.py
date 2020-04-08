@@ -151,8 +151,7 @@ def read_genbank(*filenames):
         with open(filename, 'rU') as fh:
             record = SeqIO.read(fh, 'genbank')
             # Reconstruct the name in the corresponding .fna file
-            record_name = '|'.join(["gi", record.annotations['gi'],
-                                    "ref", record.id])
+            record_name = '|'.join(["ref", record.id])
             for ft in [f for f in record.features if f.type == "CDS" and 
                        "protein_id" in f.qualifiers]:
                 ft_dict[ft.qualifiers['protein_id'][0]] = \
